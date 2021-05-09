@@ -1,10 +1,10 @@
 from piece import Piece
 from piece_factory import PieceFactory
 from constants import BLACK, WHITE
-from checkers.moves import CheckersMove, CheckersMoveSet
+from chess.moves import ChessMove, ChessMoveSet
 
 
-class CheckerFactory(PieceFactory):
+class ChessFactory(PieceFactory):
     "Concrete piece factory for setting up a checkers game"
 
     def create_piece(self, board, space):

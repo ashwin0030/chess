@@ -1,9 +1,9 @@
 from game_state import GameState
-from checkers.moves import CheckersMoveSet
+from chess.moves import ChessMoveSet
 from constants import BLACK, WHITE
 
 
-class CheckersGameState(GameState):
+class ChessGameState(GameState):
 
     def all_possible_moves(self, side=None):
         if not side:
@@ -19,6 +19,7 @@ class CheckersGameState(GameState):
 
 
     def check_loss(self, side=None):
+        #Do some sort of logic to check if player cant escape check
         if not side:
             side = self._current_side
         # no more pieces

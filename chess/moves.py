@@ -1,6 +1,6 @@
 from move import Move
 
-class CheckersMove(Move):
+class ChessMove(Move):
     def __repr__(self):
         return str(self)
 
@@ -17,7 +17,7 @@ class CheckersMove(Move):
 
 
 
-class CheckersMoveSet(list):
+class ChessMoveSet(list):
     """
     An extension to a list meant to hold checkers moves. When using append this ensures that the list does not mix jumps and non-jumps.
     """

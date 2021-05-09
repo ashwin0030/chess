@@ -6,6 +6,8 @@ import sys
 
 from checkers.pieces import CheckerFactory
 from checkers.game_state import CheckersGameState
+from chess.pieces import ChessFactory
+from chess.game_state import ChessGameState
 
 
 class GameHistory():
