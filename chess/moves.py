@@ -5,10 +5,11 @@ class ChessMove(Move):
         return str(self)
 
     def __str__(self):
-        if not self.is_jump():
-            return f"basic move: {self._start}->{self._end}"
-        else:
-            return f"jump move: {self._start}->{self._end}, capturing {self._captures}"
+        return f"move: {self._start}->{self._end}"
+        # if not self.is_jump():
+        #     return f"basic move: {self._start}->{self._end}"
+        # else:
+        #     return f"jump move: {self._start}->{self._end}, capturing {self._captures}"
 
     def is_jump(self):
         return len(self._captures) > 0
@@ -19,7 +20,7 @@ class ChessMove(Move):
 
 class ChessMoveSet(list):
     """
-    An extension to a list meant to hold checkers moves. When using append this ensures that the list does not mix jumps and non-jumps.
+    An extension to a list meant to hold chess moves. When using append this ensures that the list does not mix jumps and non-jumps.
     """
 
     def __init__(self):

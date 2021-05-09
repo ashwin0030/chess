@@ -4,7 +4,6 @@ from constants import BLACK, WHITE
 
 
 class ChessGameState(GameState):
-
     def all_possible_moves(self, side=None):
         if not side:
             side = self._current_side
