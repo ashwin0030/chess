@@ -16,6 +16,66 @@ class ChessFactory(PieceFactory):
             return Checker(WHITE, board, space)
         return None
 
+class ChessPiece(Piece):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self._side == WHITE:
+            self._symbol = u"⚆"
+            self._directions = []
+        if self._side == BLACK:
+            self._symbol = u"⚈"
+            self._directions = []
+    def enumerate_moves(self):
+        moves = ChessMoveSet()
+        done_jumping = True
+        for direction in self._directions:
+            one_step = self._board.get_dir(self._current_space, direction)
+            while one_step and one_step.is_free():
+                m = ChessMove(self._current_space, one_step, [])
+                moves.append(m)
+                one_step = self._board.get_dir(one_step, direction)
+            if one_step and not one_step.is_free():
+                if one_step.piece.side != self._side and one_step not in captured:
+                    captured.append(one_step)
+                    m = ChessMove(self._current_space, one_step, captured)
+                    moves.append(m)
+                    continue
+                else:
+                    continue
+        return moves
+
+    #def _enumerate_jumps(self, moves, current_space, captured, midjump=False):
+    #     """Recursive helper function for finding jump moves
+
+    #     Args:
+    #         moves (CheckersMoveSet): set to which moves are added when found
+    #         current_space (Space): space from which jump moves are currently being sought
+    #         captured (list): pieces captured thus far
+    #         midjump (bool, optional): flag used to avoid adding moves when no jumps have been made. Defaults to False.
+    #     """
+    #     done_jumping = True
+    #     # recursive cases making up to 4 additional branching calls
+    #     for direction in self._directions:
+    #         one_step = self._board.get_dir(current_space, direction)
+
+    #         if one_step and not one_step.is_free() and one_step.piece.side != self._side and one_step not in captured:
+    #             two_steps = self._board.get_dir(one_step, direction)
+    #             if two_steps and two_steps.is_free() or two_steps == self._current_space:
+    #                 # use + creates a shallow copy of captured so that each branch has a different list. the spaces themselves are the same objects
+    #                 self._enumerate_jumps(
+    #                     moves, two_steps, captured + [one_step], midjump=True)
+    #                 done_jumping = False
+    #     # base case. found no more jumps. time to create the move
+    #     if midjump and done_jumping:
+    #         m = CheckersMove(self._current_space, current_space, captured)
+    #         if ((self._side == WHITE and current_space.row == 0) or
+    #                 (self._side == BLACK and current_space.row == self._board.size - 1)):
+    #             m.add_promotion()
+    #         moves.append(m)
+    
+
+
+
 class Pawn(Piece):
     "Concrete piece class for a basic checker or 'peasant'"
 
@@ -33,7 +93,8 @@ class Pawn(Piece):
     def enumerate_moves(self):
         moves = ChessMoveSet()
         #2-step moves for pawns
-        if (self._side == WHITE and self._current_space.row == 6) or (self._side == BLACK and self._current_space.row == 1):
+        if (self._side == WHITE and self._current_space.row == self._board.size - 1) or \
+                (self._side == BLACK and self._current_space.row == 1):
             direction = self._directions[0]
             step = self._board.get_dir(self._current_space, direction)
             if step and step.is_free():
@@ -45,14 +106,20 @@ class Pawn(Piece):
         for direction in self._directions:
             one_step = self._board.get_dir(self._current_space, direction)
             if one_step and one_step.is_free():
-                m = CheckersMove(self._current_space, one_step)
+                m = ChessMove(self._current_space, one_step)
                 moves.append(m)
                 if (self._side == WHITE and one_step.row == 0) or \
                         (self._side == BLACK and one_step.row == self._board.size - 1):
                     m.add_promotion()
         
         for direction in self._cap_directions:
-            pass
+            one_step = self._board.get_dir(self._current_space, direction)
+            if one_step and not one_step.is_free() and one_step.piece.side != self._side:
+                m = ChessMove(self._current_space, one_step, [one_step])
+                moves.append(m)
+                if (self._side == WHITE and one_step.row == 0) or \
+                        (self._side == BLACK and one_step.row == self._board.size - 1):
+                    m.add_promotion()
 
         return moves
 
