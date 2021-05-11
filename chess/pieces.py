@@ -44,35 +44,32 @@ class ChessPiece(Piece):
                     continue
         return moves
 
-    #def _enumerate_jumps(self, moves, current_space, captured, midjump=False):
-    #     """Recursive helper function for finding jump moves
+class Bishop(ChessPiece):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._directions = ["ne", "nw", "se", "sw"]
+        if self._side == WHITE:
+            self._symbol = u"⚆"    
+        if self._side == BLACK:
+            self._symbol = u"⚈"
 
-    #     Args:
-    #         moves (CheckersMoveSet): set to which moves are added when found
-    #         current_space (Space): space from which jump moves are currently being sought
-    #         captured (list): pieces captured thus far
-    #         midjump (bool, optional): flag used to avoid adding moves when no jumps have been made. Defaults to False.
-    #     """
-    #     done_jumping = True
-    #     # recursive cases making up to 4 additional branching calls
-    #     for direction in self._directions:
-    #         one_step = self._board.get_dir(current_space, direction)
+class Rook(ChessPiece):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._directions = ["n", "s", "e", "w"]
+        if self._side == WHITE:
+            self._symbol = u"⚆"    
+        if self._side == BLACK:
+            self._symbol = u"⚈"
 
-    #         if one_step and not one_step.is_free() and one_step.piece.side != self._side and one_step not in captured:
-    #             two_steps = self._board.get_dir(one_step, direction)
-    #             if two_steps and two_steps.is_free() or two_steps == self._current_space:
-    #                 # use + creates a shallow copy of captured so that each branch has a different list. the spaces themselves are the same objects
-    #                 self._enumerate_jumps(
-    #                     moves, two_steps, captured + [one_step], midjump=True)
-    #                 done_jumping = False
-    #     # base case. found no more jumps. time to create the move
-    #     if midjump and done_jumping:
-    #         m = CheckersMove(self._current_space, current_space, captured)
-    #         if ((self._side == WHITE and current_space.row == 0) or
-    #                 (self._side == BLACK and current_space.row == self._board.size - 1)):
-    #             m.add_promotion()
-    #         moves.append(m)
-    
+class Queen(ChessPiece):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._directions = ["n", "s", "e", "w", "ne", "nw", "se", "sw"]
+        if self._side == WHITE:
+            self._symbol = u"⚆"    
+        if self._side == BLACK:
+            self._symbol = u"⚈"
 
 
 
