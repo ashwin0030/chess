@@ -27,16 +27,7 @@ class ChessMoveSet(list):
         self.has_jump = False
 
     def append(self, move):
-        if move.is_jump():
-            if not self.has_jump:
-                #this is the first jump so clear out any basic moves that might be here already
-                self.has_jump = True
-                self.clear()
-            super().append(move)
-           
-        elif not self.has_jump:
-            # only add basic moves if there are no jumps so far
-            super().append(move)
+        super().append(move)
 
     def extend(self, other):
         """

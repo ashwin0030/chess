@@ -10,10 +10,32 @@ class ChessFactory(PieceFactory):
     def create_piece(self, board, space):
         x = space.row
         y = space.col
-        if x < 3 and abs(x - y) % 2 == 0:
-            return Checker(BLACK, board, space)
-        if board.size - x < 4 and abs(x - y) % 2 == 0:
-            return Checker(WHITE, board, space)
+        if x == 0 and (y == 0 or y == board.size - 1):
+            return Rook(BLACK, board, space)
+        elif x == 0 and (y == 1 or y == board.size - 2):
+            return Knight(BLACK, board, space)
+        elif x == 0 and (y == 2 or y == board.size - 3):
+            return Bishop(BLACK, board, space)
+        elif x == 0 and y == 3:
+            return Queen(BLACK, board, space)
+        elif x == 0:
+            return King(BLACK, board, space)
+        elif x == 1:
+            return Pawn(BLACK, board, space)
+
+        if x == board.size-1 and (y == 0 or y == board.size - 1):
+            return Rook(WHITE, board, space)
+        elif x == board.size-1 and (y == 1 or y == board.size - 2):
+            return Knight(WHITE, board, space)
+        elif x == board.size-1 and (y == 2 or y == board.size - 3):
+            return Bishop(WHITE, board, space)
+        elif x == board.size-1 and y == 3:
+            return Queen(WHITE, board, space)
+        elif x == board.size-1:
+            return King(WHITE, board, space)
+        elif x == board.size-2:
+            return Pawn(WHITE, board, space)
+        
         return None
 
 class ChessPiece(Piece):
