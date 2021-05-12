@@ -60,12 +60,16 @@ class GameHistory():
 class GameDriver:
     def __init__(self, player1=HumanPlayer(),
                  player2=HumanPlayer(),
-                 history_enabled=False):
+                 history_enabled=False, checkers=False):
 
         # create board, set up, and initialize game state
-        b = Board(int(BOARD_SIZE), CheckerFactory())
+        b = Board(int(BOARD_SIZE), ChessFactory())
+        if checkers:
+            b = Board(int(BOARD_SIZE), CheckerFactory())
         b.set_up()
-        self._game_state = CheckersGameState(b, WHITE, None)
+        self._game_state = ChessGameState(b, WHITE, None)
+        if checkers:
+            self._game_state = CheckersGameState(b, WHITE, None)
 
         # set up players
         self._players = {
@@ -124,21 +128,27 @@ class GameDriver:
 if __name__ == "__main__":
 
     # take in arguments and setup defaults if necessary
+    #print("Starting")
+    checkers = False
     if len(sys.argv) > 1:
-        player1 = Player.create_player(sys.argv[1])
+        if sys.argv[1] == "checkers":
+            checkers = True
+
+    if len(sys.argv) > 2:
+        player1 = Player.create_player(sys.argv[2])
         if not player1:
             sys.exit()
     else:
         player1 = Player.create_player("human")
-    if len(sys.argv) > 2:
-        player2 = Player.create_player(sys.argv[2])
+    if len(sys.argv) > 3:
+        player2 = Player.create_player(sys.argv[3])
         if not player2:
             sys.exit()
     else:
         player2 = Player.create_player("human")
 
-    history = len(sys.argv) > 3 and sys.argv[3] == "on"
+    history = len(sys.argv) > 4 and sys.argv[4] == "on"
 
     # create driver and start game
-    game = GameDriver(player1, player2, history)
+    game = GameDriver(player1, player2, history, checkers)
     game.start_game()

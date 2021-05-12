@@ -22,4 +22,8 @@ class ChessGameState(GameState):
         if not side:
             side = self._current_side
         # no more pieces
-        return len(list(self._board.pieces_iterator(side))) == 0
+        # pieces = list()
+        for piece in self._board.pieces_iterator(side):
+            if piece._val == 100:
+                return False
+        return True

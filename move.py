@@ -77,3 +77,9 @@ class Move:
 
     def num_captures(self):
         return len(self._captures)
+    
+    def capture_value(self):
+        val = 0
+        for cap in self._captures:
+            val += cap.piece._val
+        return val

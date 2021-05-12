@@ -74,13 +74,13 @@ class GreedyCompPlayer(Player):
 
     def take_turn(self, game_state):
         options = game_state.all_possible_moves()
-        max_captures = 0
+        max_captured = 0
         potential_moves = []
         for m in options:
-            if m.num_captures() > max_captures:
+            if m.capture_value() > max_captured:
                 potential_moves = [m]
-                max_captures = m.num_captures()
-            elif m.num_captures() == max_captures:
+                max_captured = m.capture_value()
+            elif m.capture_value() == max_captured:
                 potential_moves.append(m)
 
         selected_move = random.choice(potential_moves)

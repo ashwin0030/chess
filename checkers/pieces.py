@@ -22,6 +22,7 @@ class Checker(Piece):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._val = 1
         if self._side == WHITE:
             self._symbol = u"⚆"
             self._directions = ["ne", "nw"]
@@ -88,6 +89,7 @@ class KingChecker(Checker):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._val = 2
         self._directions = ["ne", "nw", "se", "sw"]
         if self._side == WHITE:
             self._symbol = u"⚇"
