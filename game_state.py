@@ -84,7 +84,8 @@ class GameState():
             side = self._current_side
         white_pieces = self._board.pieces_iterator(WHITE)
         black_pieces = self._board.pieces_iterator(BLACK)
-        white_score, black_score = 0
+        white_score = 0
+        black_score = 0
         for piece in white_pieces:
             white_score += piece._val
         for piece in black_pieces:
