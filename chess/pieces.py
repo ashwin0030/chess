@@ -148,7 +148,7 @@ class King(Piece):
             if one_step and one_step.is_free():
                 m = ChessMove(self._current_space, one_step)
                 moves.append(m)
-            elif one_step and not one_step.is_free():
+            elif one_step and not one_step.is_free() and one_step.piece.side != self._side:
                 m = ChessMove(self._current_space, one_step, [one_step])
                 moves.append(m)
         return moves
