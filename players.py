@@ -86,3 +86,41 @@ class GreedyCompPlayer(Player):
         selected_move = random.choice(potential_moves)
         print(selected_move)
         selected_move.execute(game_state)
+
+class MiniMax(Player):
+    "Fixed-depth minimax search AI"
+    def take_turn(self, game_state, depth):
+        options = game_state.all_possible_moves()
+    def doSearch(self, game_state, depth):
+        if game_state.check_loss():
+            if game_state._current_side == self.side:
+                return LOSS
+            return WIN
+        elif game_state.check_draw():
+            return 0
+        elif depth == 0:
+            return game_state.evaluate(self.side)
+
+        if game_state._current_side == self.side:
+            v = LOSS
+            options = game_state.all_possible_moves()
+            for i in range(len(options)):
+                gs = deepcopy(game_state)
+                move = (gs.all_possible_moves())[i]
+                move.execute(gs)
+                result = self.doSearch(gs, depth - 1)
+                if result > v:
+                    v = result
+            return v
+        else:
+            v = WIN
+            options = game_state.all_possible_moves()
+            for i in range(len(options)):
+                gs = deepcopy(game_state)
+                move = (gs.all_possible_moves())[i]
+                move.execute(gs)
+                result = self.doSearch(gs, depth - 1)
+                if result < v:
+                    v = result
+            return v
+        return LOSS
