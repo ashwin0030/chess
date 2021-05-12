@@ -20,7 +20,9 @@ class Player:
             return RandomCompPlayer()
         elif player_type == "greedy":
             return GreedyCompPlayer()
-        elif len(player_type) >= len("minimax2") and player_type[0:7] == "minimax":
+        elif len(player_type) >= len("minimax") and player_type[0:7] == "minimax":
+            if len(player_type) == len("minimax"):
+                return MiniMax(3)
             try:
                 depth = int(player_type[7])
                 return MiniMax(depth)
@@ -100,11 +102,14 @@ class MiniMax(Player):
         super().__init__(*args, **kwargs)
         self._depth = depth
     def take_turn(self, game_state):
-        best = self.doSearch(game_state, self._depth)
+        #print("Side of this turn:")
+        #print(self.side)
+        best = self.doSearch(game_state, self._depth, [LOSS, None], [WIN, None])
         move = best[1]
         print(move)
         move.execute(game_state)
-    def doSearch(self, game_state, depth):
+    def doSearch(self, game_state, depth, least, most):
+        #print("Searching...")
         if game_state.check_loss():
             if game_state._current_side == self.side:
                 return [LOSS, None]
@@ -115,28 +120,59 @@ class MiniMax(Player):
             return [game_state.evaluate(self.side), None]
 
         if game_state._current_side == self.side:
-            v = [LOSS, None]
+            v = [least[0], None]
             options = game_state.all_possible_moves()
+            #print(len(options))
+            if len(options) > 0:
+                v[1] = options[0]
+            move_choices = [v]
             for i in range(len(options)):
                 gs = deepcopy(game_state)
                 move = (gs.all_possible_moves())[i]
+                #print(len(gs.all_possible_moves()))
                 move.execute(gs)
-                result = self.doSearch(gs, depth - 1)
+                result = self.doSearch(gs, depth - 1, v, most)
                 if result[0] > v[0]:
                     v[0] = result[0]
                     v[1] = options[i]
-            return v
+                    move_choices = [v]
+                elif result[0] == v[0]:
+                    temp = [result[0], options[i]]
+                    move_choices.append(temp)
+                if v[0] > most[0]:
+                    #print("")
+                    #return [LOSS, None]
+                    return v
+            selected = random.choice(move_choices)
+            #print("")
+            return selected
+            #return v
             
         else:
-            v = [WIN, None]
+            v = [most[0], None]
             options = game_state.all_possible_moves()
+            #print(len(options))
+            if len(options) > 0:
+                v[1] = options[0]
+            move_choices = [v]
             for i in range(len(options)):
                 gs = deepcopy(game_state)
                 move = (gs.all_possible_moves())[i]
                 move.execute(gs)
-                result = self.doSearch(gs, depth - 1)
+                result = self.doSearch(gs, depth - 1, least, v)
                 if result[0] < v[0]:
                     v[0] = result[0]
                     v[1] = options[i]
-            return v
+                    move_choices = [v]
+                elif result[0] == v[0]:
+                    temp = [result[0], options[i]]
+                    move_choices.append(temp)
+                if v[0] < least[0]:
+                    #print("Returning least")
+                    #return [WIN, None]
+                    return v
+            selected = random.choice(move_choices)
+            return selected
+            #return v
+        
         return [LOSS, None]

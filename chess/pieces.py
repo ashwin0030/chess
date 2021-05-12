@@ -156,8 +156,6 @@ class King(Piece):
 
 
 class Pawn(Piece):
-    "Concrete piece class for a basic checker or 'peasant'"
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._val = 1
