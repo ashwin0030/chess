@@ -49,28 +49,80 @@ class Bishop(ChessPiece):
         super().__init__(*args, **kwargs)
         self._directions = ["ne", "nw", "se", "sw"]
         if self._side == WHITE:
-            self._symbol = u"⚆"    
+            self._symbol = u"♗"    
         if self._side == BLACK:
-            self._symbol = u"⚈"
+            self._symbol = u"♝"
+
 
 class Rook(ChessPiece):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._directions = ["n", "s", "e", "w"]
         if self._side == WHITE:
-            self._symbol = u"⚆"    
+            self._symbol = u"♖"    
         if self._side == BLACK:
-            self._symbol = u"⚈"
+            self._symbol = u"♜"
 
 class Queen(ChessPiece):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._directions = ["n", "s", "e", "w", "ne", "nw", "se", "sw"]
         if self._side == WHITE:
-            self._symbol = u"⚆"    
+            self._symbol = u"♕"    
         if self._side == BLACK:
-            self._symbol = u"⚈"
+            self._symbol = u"♛"
 
+class Knight(Piece):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self._side == WHITE:
+            self._symbol = u"♘"    
+        if self._side == BLACK:
+            self._symbol = u"♞"
+    def enumerate_moves(self):
+        moves = ChessMoveSet()
+        dir1 = ["n", "e", "s", "w"]
+        dir2 = ["e", "s", "w", "n"]
+        dir3 = ["w", "n", "e", "s"]
+
+        for i, direction in enumerate(dir1):
+            one_step = self._board.get_dir(self._current_space, direction)
+            two_step = self._board.get_dir(one_step, direction)
+            turn1 = self._board.get_dir(two_step, dir2[i])
+            turn2 = self._board.get_dir(two_step, dir3[i])
+            for turn in [turn1, turn2]:
+                if turn and not turn.is_free():
+                    if turn.piece.side != self._side:
+                        m = ChessMove(self._current_space, turn, [turn])
+                        moves.append(m)
+                    else:
+                        continue
+                elif turn and turn.is_free():
+                    m = ChessMove(self._current_space, turn)
+                    moves.append(m)
+        
+        return moves
+
+class King(Piece):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._directions = ["n", "s", "e", "w", "ne", "nw", "se", "sw"]
+        if self._side == WHITE:
+            self._symbol = u"♔"    
+        if self._side == BLACK:
+            self._symbol = u"♚"
+    def enumerate_moves(self):
+        moves = ChessMoveSet()
+        for direction in self._directions:
+            one_step = self._board.get_dir(self._current_space, direction)
+            if one_step and one_step.is_free():
+                m = ChessMove(self._current_space, one_step)
+                moves.append(m)
+            elif one_step and not one_step.is_free():
+                m = ChessMove(self._current_space, one_step, [one_step])
+                moves.append(m)
+        return moves
+        
 
 
 class Pawn(Piece):
@@ -80,10 +132,10 @@ class Pawn(Piece):
         super().__init__(*args, **kwargs)
         self._cap_directions = ["ne", "nw"]
         if self._side == WHITE:
-            self._symbol = u"⚆"
+            self._symbol = u"♙"
             self._directions = ["n"]
         if self._side == BLACK:
-            self._symbol = u"⚈"
+            self._symbol = u"♟︎"
             self._directions = ["s"]
             self._cap_directions = ["se", "sw"]
 
