@@ -146,7 +146,6 @@ class RandomCompPlayer(Player):
     def take_turn(self, game_state):
         options = game_state.all_possible_moves()
         m = random.choice(options)
-        print(m)
         m.execute(game_state)
 
 
@@ -165,7 +164,7 @@ class GreedyCompPlayer(Player):
                 potential_moves.append(m)
 
         selected_move = random.choice(potential_moves)
-        print(selected_move)
+        # print(selected_move)
         selected_move.execute(game_state)
 
 class MiniMax(Player):
@@ -176,7 +175,7 @@ class MiniMax(Player):
     def take_turn(self, game_state):
         best = self.doSearch(game_state, self._depth)
         move = best[1]
-        print(move)
+        # print(move)
         move.execute(game_state)
     def doSearch(self, game_state, depth):
         if game_state.check_loss():
