@@ -66,7 +66,6 @@ class Menu:
     def __init__(self, player1=HumanPlayer(),
                  player2=HumanPlayer(),
                  history_enabled=False):
-        print("does this happen2")
         self.window = tkinter.Tk()
         self.window.title("Chess GUI")
         # self.window.report_callback_exception = handle_exception
@@ -100,6 +99,15 @@ class Menu:
         # set up history
         if history_enabled:
             self._history = GameHistory()
+            self._last_state = None
+            self._next_state = None
+            self._next_called = True
+
+
+            ttk.Button(self.button_frame, text="Undo", command=self.undo_board).pack()
+            ttk.Button(self.button_frame, text="Redo", command=self.redo_board).pack()
+            ttk.Button(self.button_frame, text="Next", command=self.next_board).pack()
+
         self.history_enabled = history_enabled
 
         self._boardGUI = []
@@ -139,7 +147,7 @@ class Menu:
         self._cur_player = self._players[self._game_state.current_side]
 
         if self.history_enabled:
-            self._history.push(prev_state)
+            self._history.push(self.prev_state)
 
         if str(type(player1)) != "<class 'playersGUI.HumanPlayer'>" and str(type(player2)) != "<class 'playersGUI.HumanPlayer'>":
             self.bot_turn()
@@ -150,6 +158,32 @@ class Menu:
 
         self.window.mainloop()
 
+
+    def undo_board(self):
+        self._last_state = self._history.undo(self._game_state)
+        if self._last_state:
+            self._game_state = self._last_state
+
+        self.refresh_colors()
+        self._cur_player = self._players[self._game_state.current_side]
+        self._next_called = False
+
+    def redo_board(self):
+        self._next_state = self._history.redo(self._game_state)
+        if self._next_state:
+            self._game_state = self._next_state
+        self.refresh_colors()
+        self._cur_player = self._players[self._game_state.current_side]
+        self._next_called = False
+
+    def next_board(self):
+        self.prev_state = deepcopy(self._game_state)
+
+        self._cur_player = self._players[self._game_state.current_side]
+        self._next_called = True
+
+        if self.history_enabled:
+            self._history.push(self.prev_state)
 
     def bot_turn(self):
         if self._game_state.check_loss():
@@ -163,8 +197,7 @@ class Menu:
 
     def refresh_colors(self):
         if self._game_state.check_loss():
-            # print("loss?")
-            self.end_game()
+             self.end_game()
 
         mRDark = ttk.Style()
         mRLight = ttk.Style()
@@ -197,13 +230,12 @@ class Menu:
     def button_click(self, x, y):
         self._game_state._button_selected = (x, y)
         # print(self._game_state._button_selected)
-        # print(str(type(self._cur_player)))
+        print(str(self._cur_player.side))
 
-        if str(type(self._cur_player)) == "<class 'playersGUI.HumanPlayer'>":
+        player_human = str(type(self._cur_player)) == "<class 'playersGUI.HumanPlayer'>"
+        if (self._history and self._next_called and player_human) or (not self._history and player_human): 
             self._cur_player.check_space(self._game_state, self._game_state._button_selected, self, self._boardGUI)
-
-
-
+            
     def end_game(self):
         self.board_frame.destroy()
         self.board_frame = ttk.Frame(self.window)
@@ -262,6 +294,8 @@ class Menu:
             self._cur_player.take_turn(self._game_state)
             self.refresh_colors()
             self._cur_player = self._players[self._game_state.current_side]
+
+        self._next_called = False
 
 if __name__ == "__main__":
 
